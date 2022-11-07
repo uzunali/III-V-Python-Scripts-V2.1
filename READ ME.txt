@@ -1,0 +1,3 @@
+Install
+pip install pyvisa
+pip install pywin32 # this also install pywin32gui
