@@ -51,8 +51,10 @@ def Thorlab100D_Test():
 
 # ----- YOUR BASE DIRECTORY ---------
 measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
+measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
+save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" + "\\"
 
 power_reading_from = ["Newport_PM", "Keithley_ChB","Thorlab_PM", "Other"] # 0 or 1
 power_index = 1 # 0 or 1
