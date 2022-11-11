@@ -1,9 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct  5 14:12:36 2022
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@Author  :   Ali Uzun 
+@Created On    :   2022/11/11 11:32:35
+@Version :   1.0
+'''
 
-@author: ali.uzun
-"""
+# here put the import lib
 
 
 import pyvisa 

@@ -50,8 +50,8 @@ class smu26xx():
         self.inst.query("print(voltage)")
 
 
-    def set_current_ChA(self,current):
-        query = "smua.source.leveli=%f" % current
+    def set_current_ChA(self,channel, current):
+        query = f"smu{channel}.source.leveli={current}"
         self.inst.write(query)
         # return query
     
@@ -167,4 +167,5 @@ class smu26xx():
         self.smu_write(cmd)
         
         
+
 

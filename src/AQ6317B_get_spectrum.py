@@ -17,6 +17,8 @@ import time
 from datetime import date
 from datetime import datetime
 
+from ANDO_AQ6317B_functions import *
+
 
 
 
@@ -26,8 +28,17 @@ file_name = 'Spectrum_test'
 
 #Set path for file to be saved to 
 path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
+# ----- YOUR BASE DIRECTORY ---------
+#measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
+measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
+# ----- FOLDER UNDER BASE DIRECTORY --------- 
+#save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
+save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" + "\\"
 
+filename = "221103_Au2Q1_do6209_1pT-MIR_CL-1.5mm_RW-2.5umT3umOver80um_MIR-6.5X50um-TD4_r1.csv"
 
+file_directory = measurement_base_path + save_to_folder # Folder the filde will be saved
+path = file_directory + filename # full path for file
 
 ''' program starts here'''
 
@@ -43,6 +54,15 @@ OSA = rm.open_resource('GPIB0::1::INSTR')
 OSA.timeout = None #High resolution files can take longer than timeout time 
 
 print(OSA.query("*IDN?")) # Check to make sure it is OSA
+
+### Sweep Settings
+#OSA.write("CTRWL 1550") #specify center wl
+#OSA.write("SPAN 50") #span of measurement
+#OSA.write("SMPL 1000") #samplying number
+#OSA.write("RESLN 1") #resolution in nm
+#OSA.write("RPT") #repeat scans
+#OSA.write("SGL") #single scan
+set_sweep_parameter(OSA, 1300, 20, 10001, 1, "SGL")
 
 #GETTING POWER OF SPECTRUM
 OSA.write("LDATA") #Trace A level data
@@ -93,11 +113,6 @@ with open(file_name + ".csv", 'w', newline='') as csvfile:
 
 
 ''' Things that also work 
-OSA.write("CTRWL 1550") #specify center wl
-OSA.write("SPAN 50") #span of measurement
-OSA.write("SMPL 1000") #samplying number
-OSA.write("RESLN 1") #resolution in nm
-OSA.write("RPT") #repeat scans
-OSA.write("SGL") #single scan
+
 
 '''

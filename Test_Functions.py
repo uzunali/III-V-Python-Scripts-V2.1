@@ -56,6 +56,18 @@ def thorlab_PM100D_test():
          
     #close connection
     thorlab_PM.close_connection()
+
+def Thorlab100D_Test():
+    thorlab_PM = Thorlab_100D()
+    # Open connection
+    thorlab_PM.Initialize_connection()
+    # # get power reading
+    for i in range(15):
+        data = thorlab_PM.get_power_reading()
+        print(data)
+         
+    #close connection
+    thorlab_PM.close_connection()
     
 def keithley_test(gpib_index,addr):
     initialize_connection = Initialize_GPIB()

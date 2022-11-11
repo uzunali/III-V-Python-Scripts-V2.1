@@ -1,7 +1,7 @@
 import time
 from tkinter import filedialog, Tk
 import pandas as pd
-from src.My_Settings import *
+from src.Parameters import *
 
 
 class IV_Sweep():
@@ -283,4 +283,57 @@ class IV_Sweep():
         # turn OFF channels 
         self.keithley_GPIB.turn_OFF_ChA()       
         self.keithley_GPIB.turn_OFF_ChB()
+    
+    
+    def wavelength_sweep_1300nmLS(self, filename, header, R, start_value, stop_value, step_size, voltage_limit = 3): 
+        """
+        Sweep wavelength in tunable laser ang gets power from the selected source ( Newport power meter, thorlab or keithley as photocurrent) 
+    
+        """
+        self.keithley_GPIB.set_limit(channel = "a", unit = "v", value = voltage_limit)
         
+        self.save_data.save_to_csv_file(filename,header, header_flag=True) # add the header for file
+        value_i = start_value
+        while value_i <= stop_value:
+            
+            # print("Set value is %f %s \n" % (value, unit))
+            self.keithley_GPIB.set_current_ChA(value_i*1e-3)
+            #keithley_GPIB.set_voltage_ChA(value_i)
+            
+            self.keithley_GPIB.turn_ON_ChA()       
+            time.sleep(keithley_sleep_time)
+                
+            #currenta = self.keithley_GPIB.get_current_ChA()
+            voltagea = self.keithley_GPIB.get_voltage_ChA()
+    
+            self.keithley_GPIB.turn_ON_ChB() 
+            # correct sing in reading
+            currentb = -1*self.keithley_GPIB.get_current_ChB()
+            #if (currentb <0):
+             #    currentb = -1*currentb
+            # Photocurrent to mW convertion
+            currentb = currentb/R
+            #currentb = newport_PM.get_data()
+                   
+            print("I=%s mA, V=%s V, P=%s \n" %(value_i, voltagea, currentb))    
+        
+            data = [value_i, voltagea,  currentb ]
+            self.save_data.save_to_csv_file(filename, data, header_flag = False)
+            value_i = value_i + step_size      
+        
+        #print threshold
+        # {k: v for k, v in sorted(threshold.items(),reverse=True, key=lambda item: item[1])}
+    
+        self.keithley_GPIB.set_voltage_ChA(0)   
+        self.keithley_GPIB.set_current_ChA(0) 
+    
+        self.keithley_GPIB.set_voltage_ChB(0) 
+        self.keithley_GPIB.set_current_ChB(0)  
+    
+        # turn OFF channels 
+        self.keithley_GPIB.turn_OFF_ChA()       
+        self.keithley_GPIB.turn_OFF_ChB()
+        
+        #self.initialize_connection.terminate_connection()
+        # close the file
+        self.save_data.close_file()
