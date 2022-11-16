@@ -50,52 +50,88 @@ class smu26xx():
         self.inst.query("print(voltage)")
 
 
-    def set_current_ChA(self,channel, current):
+    def set_current(self,channel, current):
+        """
+        Parameters
+        ----------
+        channel : String
+            a or b.
+        current : integer
+            current in mA.
+
+        Returns
+        -------
+        None.
+
+        """
         query = f"smu{channel}.source.leveli={current}"
         self.inst.write(query)
         # return query
     
-    def set_voltage_ChA(self,voltage):
-        query = "smua.source.levelv=%f" % voltage
+    def set_voltage(self,channel, voltage):
+        """
+        Parameters
+        ----------
+        channel : String
+            a or b.
+        current : integer
+            current in V.
+
+        Returns
+        -------
+        None.
+        """
+        query = f"smu{channel}.source.levelv={voltage}"
         self.inst.write(query)
         # return query
     
-    def get_current_ChA(self):
-        self.inst.write("currenta = smua.measure.i()")
+    # def get_current(self, channel):
+    #     self.inst.write(f"current = smu{channel}.measure.i()")
         
-        cmd = self.inst.query("print(currenta")
-        current = float(cmd)
+    #     cmd = self.inst.query("print(current")
+    #     current = float(cmd)
         
-        return current
+    #     return current
     
-    def get_voltage_ChA(self):
-        self.inst.write("voltage = smua.measure.v()")
+    def get_voltage(self, channel):
+        self.inst.write(f"voltage = smu{channel}.measure.v()")
         
         # inst.write("smua.source.output=smua.OUTPUT_OFF") 
         voltage = float(self.inst.query("print(voltage)"))
         return(voltage)    
     
-    def set_current_ChB(self,current):
-        query = "smub.source.leveli=%f" % current
-        self.inst.write(query)
-    
-    def set_voltage_ChB(self,voltage):
-        query = "smub.source.levelv=%f" % voltage
-        self.inst.write(query)
-    
-    def get_current_ChB(self):
-        self.inst.write("current = smub.measure.i()") 
+    def get_current(self, channel):
+        self.inst.write(f"current = smu{channel}.measure.i()") 
         # inst.write("smua.source.output=smua.OUTPUT_OFF") 
         current = float(self.inst.query("print(current)"))
         
         return current
     
-    def get_voltage_ChB(self):
-        self.inst.write("voltage = smub.measure.v()")
-        # inst.write("smua.source.output=smua.OUTPUT_OFF") 
-        voltage = float(self.inst.query("print(voltage)"))
-        return voltage
+    # def set_current_ChB(self,current):
+    #     query = "smub.source.leveli=%f" % current
+    #     self.inst.write(query)
     
+    # def set_voltage_ChB(self,voltage):
+    #     query = "smub.source.levelv=%f" % voltage
+    #     self.inst.write(query)
+    
+
+    
+    # def get_voltage_ChB(self):
+    #     self.inst.write("voltage = smub.measure.v()")
+    #     # inst.write("smua.source.output=smua.OUTPUT_OFF") 
+    #     voltage = float(self.inst.query("print(voltage)"))
+    #     return voltage
+    def turn_ON(self, channel):
+        #cmd = 'smu' + str(channel) + '.source.output = smu' + str(channel) + '.OUTPUT_ON'
+        cmd = f'smu{channel}.source.output = smu{channel}.OUTPUT_ON'
+        self.inst.write(cmd)
+        #self.inst.write("smu{channel}.source.output = smu{channel}.OUTPUT_ON")
+        
+    def turn_OFF(self, channel):
+        #cmd = 'smu' + str(channel) + '.source.output = smu' + str(channel) + '.OUTPUT_ON'
+        cmd = f'smu{channel}.source.output = smu{channel}.OUTPUT_OFF'
+        self.inst.write(cmd)
     
     def turn_ON_ChA(self):
         self.inst.write("smua.source.output = smua.OUTPUT_ON")

@@ -12,15 +12,15 @@ import time
 
 from src.Keithley26xx_GPIB import smu26xx
 from src.Initialize_Connection import Initialize_GPIB
-from src.Newport_844_PE import Newport_844_PE
-from src.Thorlab_USBPM100D import Thorlab_100D
+from src.PM_Newport_844PE import Newport_844_PE
+from src.PM_Thorlab_USBPM100D import Thorlab_100D
 
 from src.Data_Analysis import Data_Analysis
 from src.OpenFile import OpenFile
 from src.Sweep_Function import IV_Sweep
 from src.Wavelength_Sweep_1300nmLS import WL_Sweep
 
-from MSs.MyPlots import MyPlots
+from src.MyPlots import MyPlots
 import Test_Functions as TF
 
 fl = OpenFile()
@@ -31,7 +31,7 @@ myplt = MyPlots()
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
 addr = 26 # change it if necessery
-addr = 28 # change it if necessery
+#addr = 28 # change it if necessery
     
     
 ##### ------ INPUTs -------- #####
@@ -40,27 +40,31 @@ addr = 28 # change it if necessery
 measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' 
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" 
+save_to_folder = r"Test" 
 
-power_reading_from = ["Newport_PM", "Keithley_ChB","Thorlab_PM", "Other"] # power meeter for optical power reading
-# 0 for Newport_PM, 1 for Keithley_ChB, 2 for Thorlab_PM 
-power_index = 1 # 0 - 1 - 2
+power_reading_from = {0:"Keithley_ChB",1:"Newport_PM", 2:"Thorlab_PM", 3:"Other"} # power meeter for optical power reading
+# 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
+power_index = 2 # 0 - 1 - 2
 
 sweep_type = ["LIV", "IV","VI"] # sweep type
 # 0 for LIV, 1 for IV, 2 for VI 
 sweep_index = 0 # 0 - 1 - 2
 
 filename = "221103_Au2Q1_do6209_1pT-MIR_CL-1.5mm_RW-2.5umT3umOver80um_MIR-6.5X50um-TD4_%s_r1.csv" % power_reading_from[power_index]
+filename = "test_file.csv"
 
 file_directory = measurement_base_path + "\\"+ save_to_folder + "\\" # Folder the filde will be saved
 full_path = file_directory + filename # full path for file
 
 print(full_path)
 
+
 #### ----- CURRENT SWEEP SETTINGS ---------
 voltage_limit = 3 # V
-start_value = 0
-stop_value = 200 #mA
-step_size = 2 #mA
+current_start_value = 0
+current_stop_value = 10 #mA
+current_step_size = 2 #mA
+
 
 #### --------- INPUTs ------ #####
 
@@ -75,6 +79,7 @@ def wavelength_sweep():
     save_data = OpenFile()
     
     newport_PM = Newport_844_PE()
+    thorlab_PM = Thorlab_100D()
 
     sweep_function = WL_Sweep(initialize_connection, tuneable_laser_GPIB, save_data, newport_PM)
 
@@ -86,7 +91,7 @@ def wavelength_sweep():
     #### -----
     sweep_function.wavelength_sweep_1300nmLS(filename, header, wl_start_value, wl_stop_value, wl_step_size)
 
-def main():
+def main(): #voltage_limit,start_value,stop_value,step_size
 
     initialize_connection = Initialize_GPIB()
     keithley_inst = initialize_connection.connect_device(gpib_index, addr) # connect to device#
@@ -94,19 +99,39 @@ def main():
     # create an object
     keithley_GPIB =  smu26xx(keithley_inst)
     save_data = OpenFile()
-    newport_PM = Newport_844_PE()
-    sweep_function = IV_Sweep(initialize_connection, keithley_GPIB, save_data, newport_PM)
+    #newport_PM = Newport_844_PE()
+    newport_PM = None
+    try: newport_PM = Newport_844_PE()
+    except:
+        NameError
+        print("Newport PM is NOT connected !!!!!")
+    
+    thorlab_PM = None
+    try: thorlab_PM = Thorlab_100D()
+    except:
+        NameError
+        print("Thorlab PM is NOT connected !!!!!")
+        
+    sweep_function = IV_Sweep(initialize_connection, keithley_GPIB, save_data, newport_PM, thorlab_PM)
      
     header = ["Current (mA)", "Voltage (V)", "Power (mW)"]
     
+
+        
     if (sweep_type[sweep_index] == "LIV"): # sweep current on ChA, reads voltage. Power readings are from selected power meter
         
         if (power_reading_from[power_index] == "Newport_PM"):
             
-            newport_ranges = ('AUTO', '30.0mW', '3.00mW', '300uW', '30.0uW', '3.00uW', '300nW', '30.0nW')
-            rindex = 2
+            #newport_ranges = ('AUTO', '30.0mW', '3.00mW', '300uW', '30.0uW', '3.00uW', '300nW', '30.0nW')
+            #rindex = 2
             # newport_PM.set_range(rindex)
-            sweep_function.LIV_sweep_NewportPM(full_path, header, start_value=start_value, stop_value=stop_value, step_size=step_size, voltage_limit = voltage_limit)
+            sweep_function.LIV_sweep_PM(full_path, header, power_reading_from[power_index],
+                                               start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
+        if (power_reading_from[power_index] == "Thorlab_PM"):
+            
+
+            sweep_function.LIV_sweep_PM(full_path, header, power_reading_from[power_index],
+                                               start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         
         elif (power_reading_from[power_index] == "Keithley_ChB"):
             #current_ranges = [1E-7, 1E-6, 1E-5, 1E-4, 1E-3, 1E-2, 1E-1, 1, 1.5]
@@ -117,13 +142,15 @@ def main():
             R = 0.75  
             R = 0.67 # Calibrated on 03-11-2022
 
-            sweep_function.LIV_sweep_KeithleyChB(full_path, header, R, start_value=start_value, stop_value=stop_value, step_size=step_size, voltage_limit = voltage_limit)
+            sweep_function.LIV_sweep_KeithleyChB(full_path, header, R, 
+                                                 start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         else:
             print("No power source selected !!!!!")
 
     elif (sweep_type[sweep_index] == "IV"): # sweep current on ChA and reads voltage
 
-            sweep_function.IV_sweep(full_path, header, start_value=start_value, stop_value=stop_value, step_size = step_size, voltage_limit = voltage_limit)
+            sweep_function.IV_sweep(full_path, header, 
+                                    start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         
     elif (sweep_type[sweep_index] == "VI"): # sweep voltage on ChA, reads current
         current_limit = 120 # mA
@@ -131,7 +158,8 @@ def main():
         stop_value = 3 # V
         step_size = 0.1 # V
 
-        sweep_function.VI_sweep(full_path, header, start_value=start_value, stop_value=stop_value, step_size = step_size, current_limit = current_limit)
+        sweep_function.VI_sweep(full_path, header, 
+                                start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, current_limit = current_limit)
 
     else: 
         print(" No sweep selected !!!")
@@ -155,11 +183,11 @@ def main():
 
 if __name__ == "__main__":
     main()
-    #Thorlab100D_Test()
-    #TF.ist_device_GPIB()
+    
+    #TF.list_device_GPIB()
     #keithley_function()
-    #probe_alingmment_test()
-    #keithley_test() 
+    #TF.probe_alingmment_test(gpib_index,addr)
+    #TF.keithley_test(gpib_index,addr) 
     #get_current_In_ChB  ()  
     #plot_test()
     #keithley_test()

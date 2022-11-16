@@ -15,7 +15,7 @@ class Thorlab_100D():
         
         #self.resourceName = create_string_buffer(1024)
         self.tlPM = None
-        pass
+        self.Initialize_connection()
               
             
     def Initialize_connection(self):
@@ -59,7 +59,7 @@ class Thorlab_100D():
         #tlPM = TLPM()
         #self.tlPM.open(self.resourceName, c_bool(True), c_bool(True))
     
-        time.sleep(0.5)
+        time.sleep(0.3)
         power =  c_double()
         self.tlPM.measPower(byref(power))
         #power_measurements.append(power.value)

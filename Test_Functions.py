@@ -10,13 +10,14 @@ import sys
 import pandas as pd
 import time
 
-from Keithley26xx_GPIB import smu26xx
-from Initialize_Connection import Initialize_GPIB
-from Data_Analysis import Data_Analysis
-from Newport_844_PE import Newport_844_PE
-from Sweep_Function import IV_Sweep
-from OpenFile import OpenFile
-from Thorlab_USBPM100D import Thorlab_100D
+from src.Keithley26xx_GPIB import smu26xx
+from src.Initialize_Connection import Initialize_GPIB
+from src.PM_Newport_844PE import Newport_844_PE
+from src.PM_Thorlab_USBPM100D import Thorlab_100D
+
+from src.Data_Analysis import Data_Analysis
+from src.OpenFile import OpenFile
+from src.Sweep_Function import IV_Sweep
 
 fl = OpenFile()
 da = Data_Analysis()
@@ -79,7 +80,7 @@ def keithley_test(gpib_index,addr):
     keithley_GPIB =  smu26xx(inst)
     #keithley_GPIB.set_display("a", "DCAMPS") #DCVOLTS, DCAMPS
     
-    keithley_GPIB.set_mode("a","DCAMPS")
+    #keithley_GPIB.set_mode("a","DCAMPS")
     
     
 
@@ -113,15 +114,16 @@ def probe_alingmment_test(gpib_index,addr):
     keithley_GPIB.set_limit("a", "v", 3)
     keithley_GPIB.turn_ON_ChA()
     set_cur = 50
-    keithley_GPIB.set_current_ChA(set_cur*1e-3)
+    keithley_GPIB.set_current('a',set_cur*1e-3)
     
     
-    for i in range(200):
-         time.sleep(0.3)
-         data = keithley_GPIB.get_current_ChB()
+    for i in range(10):
+         time.sleep(0.2)
+         data = keithley_GPIB.get_current("b") #get_current("b")
+         voltage = keithley_GPIB.get_voltage("a")
          #data = newport_PM.get_power_reading()
     
-         print(data)
+         print(f"V:{voltage}, I:{data}")
     #time.sleep(50)
     keithley_GPIB.turn_OFF_ChA()
     keithley_GPIB.turn_OFF_ChB()
