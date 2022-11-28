@@ -100,7 +100,7 @@ class MyPlots():
         
         self.save_plot(file_path, fl, fig)
 
-    def plot_LIV(self,file_path,fl, x, y1, y2, x_label, y_label, y_label2):
+    def plot_LIV(self,file_path,fl, x, y1, y2, x_label, y_label, y_label2, x_min, x_max,y_min, y_max,auto_range_xy = False):
         """
             Plot in y1 |___| y2 format
                         x 
@@ -131,12 +131,12 @@ class MyPlots():
         ax2.set_ylabel(y_label2, color = "blue", fontsize = label_fontsize)
         
         xy_label_fontsize = 16
+        if (auto_range_xy):
+            #x_min, x_max = 0, 150
+            plt.xlim([x_min, x_max])
         
-        x_min, x_max = 0, 150
-        plt.xlim([x_min, x_max])
-        
-        y_min, y_max = -0, 26
-        plt.ylim([y_min, y_max])
+            #y_min, y_max = -0, 26
+            plt.ylim([y_min, y_max])
         
         # plt.legend(line_style[:2], ['Voltage','Power'],
         #            fontsize = legend_fontsize)

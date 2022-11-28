@@ -30,7 +30,7 @@ myplt = MyPlots()
 
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
-addr = 26 # change it if necessery
+addr = 28 # change it if necessery
 #addr = 28 # change it if necessery
     
     
@@ -41,17 +41,21 @@ measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurement
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" 
 save_to_folder = r"Test" 
+save_to_folder = r"A2910\2022-11-24"
+#save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" 
 
 power_reading_from = {0:"Keithley_ChB",1:"Newport_PM", 2:"Thorlab_PM", 3:"Other"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 2 # 0 - 1 - 2
+power_index = 0 # 0 - 1 - 2
 
 sweep_type = ["LIV", "IV","VI"] # sweep type
 # 0 for LIV, 1 for IV, 2 for VI 
 sweep_index = 0 # 0 - 1 - 2
 
-filename = "221103_Au2Q1_do6209_1pT-MIR_CL-1.5mm_RW-2.5umT3umOver80um_MIR-6.5X50um-TD4_%s_r1.csv" % power_reading_from[power_index]
-filename = "test_file.csv"
+
+filename = "DFB-1_Chip4_CL1.8mm_5deg_B5_ARCoated_dev4_r1_%s.csv" % power_reading_from[power_index]
+filename = "221124_A2910_2pMIR_CL-1.5mm_RW-3.0um_Dev1_%s_r1.csv" % power_reading_from[power_index]
+#filename = "test_file.csv"
 
 file_directory = measurement_base_path + "\\"+ save_to_folder + "\\" # Folder the filde will be saved
 full_path = file_directory + filename # full path for file
@@ -60,9 +64,9 @@ print(full_path)
 
 
 #### ----- CURRENT SWEEP SETTINGS ---------
-voltage_limit = 3 # V
+voltage_limit = 4.0 # V
 current_start_value = 0
-current_stop_value = 10 #mA
+current_stop_value = 200 #mA
 current_step_size = 2 #mA
 
 
@@ -101,16 +105,18 @@ def main(): #voltage_limit,start_value,stop_value,step_size
     save_data = OpenFile()
     #newport_PM = Newport_844_PE()
     newport_PM = None
-    try: newport_PM = Newport_844_PE()
-    except:
-        NameError
-        print("Newport PM is NOT connected !!!!!")
-    
     thorlab_PM = None
-    try: thorlab_PM = Thorlab_100D()
-    except:
-        NameError
-        print("Thorlab PM is NOT connected !!!!!")
+    if (power_reading_from[power_index] != "Keithley_ChB"):
+        
+        try: newport_PM = Newport_844_PE()
+        except:
+            NameError
+            print("Newport PM is NOT connected !!!!!")
+        
+        try: thorlab_PM = Thorlab_100D()
+        except:
+            NameError
+            print("Thorlab PM is NOT connected !!!!!")
         
     sweep_function = IV_Sweep(initialize_connection, keithley_GPIB, save_data, newport_PM, thorlab_PM)
      
@@ -141,6 +147,7 @@ def main(): #voltage_limit,start_value,stop_value,step_size
             # Responsivity of Detector (A/W), 818IR Ge Detector
             R = 0.75  
             R = 0.67 # Calibrated on 03-11-2022
+            R = 1
 
             sweep_function.LIV_sweep_KeithleyChB(full_path, header, R, 
                                                  start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
@@ -165,17 +172,20 @@ def main(): #voltage_limit,start_value,stop_value,step_size
         print(" No sweep selected !!!")
 
     # plot the sweep
+    x_min, x_max =0, 1
+    y_min, y_max = 0, 4
+    auto_range_xy = False
     if (sweep_type[sweep_index] == "LIV"):
         #plot_sweep(filename, full_path)
         x_label = "Current (mA)"
         y_label_Left = "Voltage (V)"
-        y_label_right = "Optical Power (mW)"
+        y_label_right = "Optical Power (W)"
 
   
         I,V,P = fl.read_csv_file(full_path)
-        P = P*1e3
+        P = P*1e0
         file_path = file_directory
-        myplt.plot_LIV(file_path, filename, I, V, P, x_label, y_label_Left, y_label_right)
+        myplt.plot_LIV(file_path, filename, I, V, P, x_label, y_label_Left, y_label_right,x_min, x_max,y_min, y_max,auto_range_xy)
             
     
     keithley_inst.close()
