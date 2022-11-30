@@ -23,6 +23,9 @@ from src.Wavelength_Sweep_1300nmLS import WL_Sweep
 from src.MyPlots import MyPlots
 import Test_Functions as TF
 
+from src.TLPM import TLPM
+from ctypes import   c_uint32,byref,create_string_buffer,c_bool,c_char_p,c_int,c_int16,c_double, sizeof, c_voidp
+
 fl = OpenFile()
 da = Data_Analysis()
 
@@ -69,6 +72,9 @@ current_start_value = 0
 current_stop_value = 200 #mA
 current_step_size = 2 #mA
 
+#### -- wavelength for Thorlab PM
+wavelength = 1300 # nm
+
 
 #### --------- INPUTs ------ #####
 
@@ -83,7 +89,7 @@ def wavelength_sweep():
     save_data = OpenFile()
     
     newport_PM = Newport_844_PE()
-    thorlab_PM = Thorlab_100D()
+    thorlab_PM = Thorlab_100D(wavelength)
 
     sweep_function = WL_Sweep(initialize_connection, tuneable_laser_GPIB, save_data, newport_PM)
 
@@ -113,13 +119,25 @@ def main(): #voltage_limit,start_value,stop_value,step_size
             NameError
             print("Newport PM is NOT connected !!!!!")
         
-        try: thorlab_PM = Thorlab_100D()
+        try: thorlab_PM = Thorlab_100D(wavelength)
         except:
             NameError
             print("Thorlab PM is NOT connected !!!!!")
         
     sweep_function = IV_Sweep(initialize_connection, keithley_GPIB, save_data, newport_PM, thorlab_PM)
-     
+
+    tlPM = TLPM()
+    #resetting wavlength by a random value
+    wavelength = c_double(1800)
+    wl = tlPM.setWavelength(wavelength)
+    print(wl)
+    time.sleep(0.2)
+    #set the wavelength to be measured !!!!
+    wavelength = 1550
+    wavelength = c_double(wavelength)
+    wl = tlPM.setWavelength(wavelength)
+    print(wl)
+ 
     header = ["Current (mA)", "Voltage (V)", "Power (mW)"]
     
 

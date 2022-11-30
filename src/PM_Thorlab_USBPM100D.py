@@ -11,10 +11,11 @@ from src.TLPM import TLPM
 import time
 
 class Thorlab_100D():
-    def __init__(self):
+    def __init__(self, wavelength):
         
         #self.resourceName = create_string_buffer(1024)
         self.tlPM = None
+        self.wavelength = wavelength
         self.Initialize_connection()
               
             
@@ -44,16 +45,16 @@ class Thorlab_100D():
         print("Calibration Message !!!")
         print(c_char_p(message.raw).value)
         
-        # #resetting wavlength by a random value
-        # wavelength = c_double(1800)
-        # wl = self.tlPM.setWavelength(wavelength)
-        # print(wl)
-        # time.sleep(1)
-        # #set the wavelength to be measured
-        # wavelength = 1300
-        # wavelength = c_double(wavelength)
-        # wl = self.tlPM.setWavelength(wavelength)
-        # print(wl)
+        #resetting wavlength by a random value
+        wavelength = c_double(1800)
+        wl = self.tlPM.setWavelength(wavelength)
+        print(wl)
+        time.sleep(1)
+        #set the wavelength to be measured
+        wavelength = self.wavelength
+        wavelength = c_double(wavelength)
+        wl = self.tlPM.setWavelength(wavelength)
+        print(wl)
     
     def get_power_reading(self):
         #tlPM = TLPM()

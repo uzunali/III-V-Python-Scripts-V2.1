@@ -59,7 +59,8 @@ def thorlab_PM100D_test():
     thorlab_PM.close_connection()
 
 def Thorlab100D_Test():
-    thorlab_PM = Thorlab_100D()
+    wavelength = 1300
+    thorlab_PM = Thorlab_100D(wavelength)
     # Open connection
     thorlab_PM.Initialize_connection()
     # # get power reading
