@@ -85,7 +85,7 @@ def keithley_test(gpib_index,addr):
     
     
 
-def keithley_function(gpib_index,addr):
+def keithley_setVoltageChA(gpib_index,addr):
     initialize_connection = Initialize_GPIB()
     #gpib_index = 0
     #addr = 26 # change it if necessery

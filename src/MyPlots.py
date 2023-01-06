@@ -113,7 +113,7 @@ class MyPlots():
         
         fig,ax = plt.subplots()
 
-        # plt.title(fl)
+        plt.title(fl)
         
         # make a plot
         lstyle = 0

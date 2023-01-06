@@ -115,11 +115,13 @@ power_index = 2 # 0 or 1
 
 filename = "221103_Au2Q1_do6209_1pMIR_CL1.5mm_RW2.5um_MIR-6.5X54um-TD2_%s_r1.csv" % power_reading_from[power_index]
 filename = "Test.csv"
+filename = "Run2-do6209_CF-Laser_CL-1mm_RW-2.5um_%s_r1.csv" % power_reading_from[power_index]
+
 
 measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
 
 #save_to_folder = "20220628 3um Si ridge WG\\220708 AU-2276-3umSOI-C2 AU3bQ3\\"
-save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
+save_to_folder = "Run-2 do6209\\2022-12-19\\"
 
 full_path = measurement_base_path + save_to_folder + filename
 print(full_path)
@@ -134,7 +136,7 @@ writer.writerow(header)
 
 voltage_limit = 3 # V
 start_value = 0
-stop_value = 20 #mA
+stop_value = 0 #mA
 step_size = 2 #mA
 
         

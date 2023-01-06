@@ -11,11 +11,11 @@ from src.TLPM import TLPM
 import time
 
 class Thorlab_100D():
-    def __init__(self, wavelength):
+    def __init__(self):
         
         #self.resourceName = create_string_buffer(1024)
         self.tlPM = None
-        self.wavelength = wavelength
+        self.wavelength = None#wavelength
         self.Initialize_connection()
               
             
@@ -36,7 +36,7 @@ class Thorlab_100D():
         # tlPM.close()
 
         # tlPM = TLPM()
-        #resourceName = create_string_buffer(b"COM1::115200")
+        #self.resourceName = create_string_buffer(b"COM1::115200")
         #print(c_char_p(resourceName.raw).value)
         self.tlPM.open(self.resourceName, c_bool(True), c_bool(True))
         

@@ -18,7 +18,7 @@ import pandas as pd
 
 
 #Set path for file to be saved to 
-path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
+#path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
 # ----- YOUR BASE DIRECTORY ---------
 #measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
 measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
@@ -26,14 +26,21 @@ measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurement
 #save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
 save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" + "\\"
 
-fp = "\\\\FS1\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\DFB Laser\\DFB-1\\2022-11-24 Chip4 1.8-1.9mm" + "\\"
-filename = "DFB-1_Chip4_CL1.8mm_5deg_A5_ARCoated_dev2_SPT_100mA"
-filename = "TEST"
+measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
+save_to_folder = "Run-2 do6209\\2022-12-19\\"
+save_to_folder =  "Run-1 do5960\\2022-12-20\\"
+
+
+Idrive = 100
+filename = "Run1-do5960_EF-Laser_CL-2.0mm_RW-3.0um_dev2_SPT_%smA.csv"%Idrive
+#filename = "TEST"
+full_path = measurement_base_path + save_to_folder + filename
+print(full_path)
 
 file_directory = measurement_base_path + save_to_folder # Folder the filde will be saved
 
-path = file_directory + filename # full path for file
-r_path = fp + filename # Folder the filde will be saved
+#path = file_directory + filename # full path for file
+#r_path = fp + filename # Folder the filde will be saved
 
 ''' program starts here'''
 
@@ -70,6 +77,13 @@ wl_float = [float(s) for s in wl.split(',')] # splitting list elements into floa
 wl_float.pop(0) # taking out first term - not a data point
 #print(wl_float)
 
+fig,ax = plt.subplots()
+x_min, x_max = 1270, 1310
+plt.xlim([x_min, x_max])
+      
+            #y_min, y_max = -0, 26
+y_min, y_max = -85,-30
+plt.ylim([y_min, y_max])
 #PLOTTING SPECTRUM
 plt.plot(wl_float, spectrum_float, linewidth = 0.4)
 plt.xlabel("Wavelength (nm)")
@@ -97,4 +111,4 @@ for i in range(len(wl_float)):
     
         
 ## SAVE as csv FILE
-data.to_csv(r_path + '.csv',index=False)
+data.to_csv(full_path,index=False)

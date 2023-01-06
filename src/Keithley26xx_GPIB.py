@@ -197,6 +197,7 @@ class smu26xx():
         # set the measurement range
         cmd = 'smu' + str(channel) + '.measure.range' + str(unit) + ' = ' + str(range)
         self.smu_write(cmd)
+        
     def set_range_ChB(self, rg):
         # set the measurement range
         cmd = 'smub.measure.range' + 'i' + ' = ' + str(rg)

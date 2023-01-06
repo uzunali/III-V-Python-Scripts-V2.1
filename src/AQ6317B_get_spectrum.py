@@ -25,6 +25,7 @@ def set_sweep_parameter(OSA,centre_wavelength, span, num_of_sample, resoultion,s
     OSA.write(f"SPAN {span}") #span of measurement
     OSA.write(f"SMPL {num_of_sample}") #samplying number
     OSA.write(f"RESLN {resoultion}") #resolution in nm
+    #OSA.write(f"{sensitivity}") #Sensitivity scan
     OSA.write(f"{scan}") #repeat or single scans
 
 
@@ -80,27 +81,27 @@ def get_data(OSA, filename):
     data.to_csv(filename + '.csv',index=False)
 
 
-'''Input parameters here'''
-#Name  your file 
-file_name = 'Spectrum_test'
+# '''Input parameters here'''
+# #Name  your file 
+# file_name = 'Spectrum_test'
 
-#Set path for file to be saved to 
-path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
-# ----- YOUR BASE DIRECTORY ---------
-#measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
-measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
-# ----- FOLDER UNDER BASE DIRECTORY --------- 
-#save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
-save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" + "\\"
+# #Set path for file to be saved to 
+# path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
+# # ----- YOUR BASE DIRECTORY ---------
+# #measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
+# measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
+# # ----- FOLDER UNDER BASE DIRECTORY --------- 
+# #save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
+# save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" + "\\"
 
-fp = "\\\\FS1\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\DFB Laser\\DFB-1\\2022-11-24 Chip4 1.8-1.9mm" + "\\"
-filename = "DFB-1_Chip4_CL1.8mm_5deg_A5_ARCoated_dev2_SPT_100mA"
-filename = "TEST"
+# fp = "\\\\FS1\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\DFB Laser\\DFB-1\\2022-11-24 Chip4 1.8-1.9mm" + "\\"
+# filename = "DFB-1_Chip4_CL1.8mm_5deg_A5_ARCoated_dev2_SPT_100mA"
+# filename = "TEST"
 
-file_directory = measurement_base_path + save_to_folder # Folder the filde will be saved
+# file_directory = measurement_base_path + save_to_folder # Folder the filde will be saved
 
-path = file_directory + filename # full path for file
-r_path = fp + filename # Folder the filde will be saved
+# path = file_directory + filename # full path for file
+# r_path = fp + filename # Folder the filde will be saved
 
 ''' program starts here'''
 
@@ -124,5 +125,8 @@ print(OSA.query("*IDN?")) # Check to make sure it is OSA
 #OSA.write("RESLN 1") #resolution in nm
 #OSA.write("RPT") #repeat scans
 #OSA.write("SGL") #single scan
-set_sweep_parameter(OSA, 1290, 20, 5001, 0.01, "SGL")
+
+set_sweep_parameter(OSA, 1285, 20, 5001, 0.01, "SGL")
+
+#set_sweep_parameter(OSA, 1285, 60, 5001, 0.1, "RPT")
 

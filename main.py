@@ -33,8 +33,8 @@ myplt = MyPlots()
 
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
+addr = 26 # change it if necessery
 addr = 28 # change it if necessery
-#addr = 28 # change it if necessery
     
     
 ##### ------ INPUTs -------- #####
@@ -44,20 +44,33 @@ measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurement
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" 
 save_to_folder = r"Test" 
-save_to_folder = r"A2910\2022-11-24"
+save_to_folder = r"Run-2 do6209\2023-01-04 Cleaved Facet Laser"
 #save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" 
 
-power_reading_from = {0:"Keithley_ChB",1:"Newport_PM", 2:"Thorlab_PM", 3:"Other"} # power meeter for optical power reading
+power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"Other"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 0 # 0 - 1 - 2
+power_index = 0  # 0 - 1 - 2
 
 sweep_type = ["LIV", "IV","VI"] # sweep type
 # 0 for LIV, 1 for IV, 2 for VI 
 sweep_index = 0 # 0 - 1 - 2
 
+####------- Responsivity of Newport 818IR detector
+R = 0.67 # Calibrated on 03-11-2022
+#R = 1
+#R = 0.72 
 
-filename = "DFB-1_Chip4_CL1.8mm_5deg_B5_ARCoated_dev4_r1_%s.csv" % power_reading_from[power_index]
-filename = "221124_A2910_2pMIR_CL-1.5mm_RW-3.0um_Dev1_%s_r1.csv" % power_reading_from[power_index]
+#filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
+
+filename = "Run2-do6209_EF-Laser_CL-1.5mm_RW-5.0um_dev1"
+file_record_index = 1
+
+if(power_index ==0):
+    filename = filename + "_%s_R-%s_r%s.csv" % (power_reading_from[power_index],str(R),str(file_record_index))
+else:
+    filename = filename + "_%s_r%s.csv" % (power_reading_from[power_index],str(file_record_index))
+
+
 #filename = "test_file.csv"
 
 file_directory = measurement_base_path + "\\"+ save_to_folder + "\\" # Folder the filde will be saved
@@ -67,7 +80,7 @@ print(full_path)
 
 
 #### ----- CURRENT SWEEP SETTINGS ---------
-voltage_limit = 4.0 # V
+voltage_limit = 4.50 # V
 current_start_value = 0
 current_stop_value = 200 #mA
 current_step_size = 2 #mA
@@ -119,26 +132,33 @@ def main(): #voltage_limit,start_value,stop_value,step_size
             NameError
             print("Newport PM is NOT connected !!!!!")
         
-        try: thorlab_PM = Thorlab_100D(wavelength)
+        try: 
+            thorlab_PM = Thorlab_100D()
+            #resetting wavlength by a random value
+            # tlPM = TLPM()
+            # wavelength = c_double(1310)
+            # wl = tlPM.setWavelength(wavelength)
+            # print(wl)
+            # time.sleep(0.2)
+            # #set the wavelength to be measured !!!!
+            # wavelength = 1550
+            # wavelength = c_double(wavelength)
+            # wl = tlPM.setWavelength(wavelength)
+            # print(wl)
+            # tlPM.close()
         except:
             NameError
             print("Thorlab PM is NOT connected !!!!!")
+               
         
     sweep_function = IV_Sweep(initialize_connection, keithley_GPIB, save_data, newport_PM, thorlab_PM)
 
-    tlPM = TLPM()
-    #resetting wavlength by a random value
-    wavelength = c_double(1800)
-    wl = tlPM.setWavelength(wavelength)
-    print(wl)
-    time.sleep(0.2)
-    #set the wavelength to be measured !!!!
-    wavelength = 1550
-    wavelength = c_double(wavelength)
-    wl = tlPM.setWavelength(wavelength)
-    print(wl)
- 
-    header = ["Current (mA)", "Voltage (V)", "Power (mW)"]
+    
+    if(R == 1):
+        header = ["Current (mA)", "Voltage (V)", "Photocurrent (A)"]
+    else:  
+        header = ["Current (mA)", "Voltage (V)", "Power (W)"]
+
     
 
         
@@ -157,15 +177,13 @@ def main(): #voltage_limit,start_value,stop_value,step_size
             sweep_function.LIV_sweep_PM(full_path, header, power_reading_from[power_index],
                                                start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         
-        elif (power_reading_from[power_index] == "Keithley_ChB"):
+        elif (power_reading_from[power_index] == "Keithley"):
             #current_ranges = [1E-7, 1E-6, 1E-5, 1E-4, 1E-3, 1E-2, 1E-1, 1, 1.5]
-            rg = 1E-1 # keithley channel range
-            keithley_GPIB.set_range_ChB(rg)
+            #rg = 1E-1 # keithley channel range
+            #keithley_GPIB.set_range_ChB(rg)
 
             # Responsivity of Detector (A/W), 818IR Ge Detector
-            R = 0.75  
-            R = 0.67 # Calibrated on 03-11-2022
-            R = 1
+            
 
             sweep_function.LIV_sweep_KeithleyChB(full_path, header, R, 
                                                  start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
@@ -201,7 +219,7 @@ def main(): #voltage_limit,start_value,stop_value,step_size
 
   
         I,V,P = fl.read_csv_file(full_path)
-        P = P*1e0
+        #P = P*1e0
         file_path = file_directory
         myplt.plot_LIV(file_path, filename, I, V, P, x_label, y_label_Left, y_label_right,x_min, x_max,y_min, y_max,auto_range_xy)
             
@@ -213,7 +231,7 @@ if __name__ == "__main__":
     main()
     
     #TF.list_device_GPIB()
-    #keithley_function()
+    #TF.keithley_setVoltageChA(gpib_index,addr)
     #TF.probe_alingmment_test(gpib_index,addr)
     #TF.keithley_test(gpib_index,addr) 
     #get_current_In_ChB  ()  
