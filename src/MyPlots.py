@@ -164,7 +164,56 @@ class MyPlots():
         #             format='jpeg',
         #             dpi=600,
         #         bbox_inches='tight')
+    def plot_IV(self,file_path,fl, x, y, x_label, y_label, x_min, x_max,y_min, y_max,auto_range_xy = False):
+        """
+            Plot in y1 |___| y2 format
+                        x 
+            Labels: Voltage versus Power or Current
+        """
+        #labels = {"Voltage":" (V)", "Current":" (mA)","Power":" (mW)"}
+        legend_fontsize = 15
+        xy_label_fontsize = 20
+        lwidth = 2
+        
+        fig,ax = plt.subplots()
 
+        plt.title(fl)
+        
+        # xy_label_fontsize = 14
+        plt.xlabel(x_label,fontsize = xy_label_fontsize)
+        plt.ylabel(y_label,fontsize = xy_label_fontsize)
+        
+        # lwidth = 1
+        lstyle = 0
+        plt.plot(x, y, color = "blue", linewidth = lwidth,linestyle = self.line_style[lstyle])
+        
+        # x_min, x_max = 1280, 1300
+        # y_min, y_max = -85, -10
+        
+        #plt.xlim([x_min, x_max])
+        #plt.ylim([y_min, y_max])
+        # #plt.figure(dpi=300,figsize=(6, 8))
+        
+        # axis_value_fontsize = 10
+        #plt.xticks(fontsize = axis_value_fontsize)
+        #plt.yticks(fontsize = axis_value_fontsize)
+        
+        
+        #plt.title(f'{fl}')
+        plt.grid(True)
+        plt.show()
+        
+        # plt_name = "T1"
+        #self.save_plot(file_path, fl, fig)
+        
+        # fl = "220805_1.8mm_1pMIR_LIV"
+        # fig.savefig(f'{fl}.jpg',
+        #             format='jpeg',
+        #             dpi=600,
+        #         bbox_inches='tight')
+
+
+        
 
     selected = [9,17,23,8,2,24,4,6]
 

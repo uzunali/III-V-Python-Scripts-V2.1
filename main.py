@@ -34,26 +34,27 @@ myplt = MyPlots()
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
 addr = 26 # change it if necessery
-addr = 28 # change it if necessery
+#addr = 28 # change it if necessery
     
-    
+
 ##### ------ INPUTs -------- #####
 
 # ----- YOUR BASE DIRECTORY ---------
-measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' 
+measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 23' 
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
-save_to_folder = r"Run-2 do6209\2022-11-03 1.5 mm 1pMIR&EF" 
-save_to_folder = r"Test" 
-save_to_folder = r"Run-2 do6209\2023-01-04 Cleaved Facet Laser"
+save_to_folder = r"2023-05-02 QDL Run N-Metal" 
+# save_to_folder = r"Test" 
+# save_to_folder = r"2023-01-31 MTP4"
+# save_to_folder = r"Test"
 #save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" 
 
-power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"Other"} # power meeter for optical power reading
+power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"None"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 0  # 0 - 1 - 2
+power_index = 3  # 0 - 1 - 2
 
-sweep_type = ["LIV", "IV","VI"] # sweep type
+select_sweep_type = {0:"LIV",1:"IV", 2:"VI"}
 # 0 for LIV, 1 for IV, 2 for VI 
-sweep_index = 0 # 0 - 1 - 2
+sweep_index = 1 # 0 - 1 - 2
 
 ####------- Responsivity of Newport 818IR detector
 R = 0.67 # Calibrated on 03-11-2022
@@ -62,13 +63,16 @@ R = 0.67 # Calibrated on 03-11-2022
 
 #filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
 
-filename = "Run2-do6209_EF-Laser_CL-1.5mm_RW-5.0um_dev1"
+filename = "AU2eQ1-Top N-Metal TLM_R-175um_IV-Sweep_Ring-1"
+#filename = "AU2eQ1-Probe-TEST-on-same-metal-IV-2"
+filename = "TEST"
+
 file_record_index = 1
 
-if(power_index ==0):
+if(power_index == 0):
     filename = filename + "_%s_R-%s_r%s.csv" % (power_reading_from[power_index],str(R),str(file_record_index))
 else:
-    filename = filename + "_%s_r%s.csv" % (power_reading_from[power_index],str(file_record_index))
+    filename = filename + "_r%s.csv" % str(file_record_index)
 
 
 #filename = "test_file.csv"
@@ -81,12 +85,19 @@ print(full_path)
 
 #### ----- CURRENT SWEEP SETTINGS ---------
 voltage_limit = 4.50 # V
-current_start_value = 0
-current_stop_value = 200 #mA
+current_start_value = -100
+current_stop_value = 100 #mA
 current_step_size = 2 #mA
 
+
+#### ----- VOLTAGE SWEEP SETTINGS ---------
+current_limit = 100 # mA
+voltage_start_value = -1
+voltage_stop_value = 1 # V
+voltage_step_size = 0.05 # V
+
 #### -- wavelength for Thorlab PM
-wavelength = 1300 # nm
+wavelength = 1200 # nm
 
 
 #### --------- INPUTs ------ #####
@@ -160,9 +171,10 @@ def main(): #voltage_limit,start_value,stop_value,step_size
         header = ["Current (mA)", "Voltage (V)", "Power (W)"]
 
     
-
         
-    if (sweep_type[sweep_index] == "LIV"): # sweep current on ChA, reads voltage. Power readings are from selected power meter
+    if (select_sweep_type[sweep_index] == "LIV"): # sweep current on ChA, reads voltage. Power readings are from selected power meter
+        
+        keithley_GPIB.keithley_current_mode("a", display = "DCVOLTS")
         
         if (power_reading_from[power_index] == "Newport_PM"):
             
@@ -189,39 +201,73 @@ def main(): #voltage_limit,start_value,stop_value,step_size
                                                  start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         else:
             print("No power source selected !!!!!")
-
-    elif (sweep_type[sweep_index] == "IV"): # sweep current on ChA and reads voltage
-
-            sweep_function.IV_sweep(full_path, header, 
-                                    start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         
-    elif (sweep_type[sweep_index] == "VI"): # sweep voltage on ChA, reads current
-        current_limit = 120 # mA
-        start_value = 0
-        stop_value = 3 # V
-        step_size = 0.1 # V
-
-        sweep_function.VI_sweep(full_path, header, 
-                                start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, current_limit = current_limit)
-
-    else: 
-        print(" No sweep selected !!!")
-
-    # plot the sweep
-    x_min, x_max =0, 1
-    y_min, y_max = 0, 4
-    auto_range_xy = False
-    if (sweep_type[sweep_index] == "LIV"):
+        ###----------------- plot the sweep -------------
+        x_min, x_max =0, 1
+        y_min, y_max = 0, 4
+        auto_range_xy = False
         #plot_sweep(filename, full_path)
         x_label = "Current (mA)"
         y_label_Left = "Voltage (V)"
         y_label_right = "Optical Power (W)"
 
-  
         I,V,P = fl.read_csv_file(full_path)
         #P = P*1e0
         file_path = file_directory
         myplt.plot_LIV(file_path, filename, I, V, P, x_label, y_label_Left, y_label_right,x_min, x_max,y_min, y_max,auto_range_xy)
+
+
+
+    elif (select_sweep_type[sweep_index] == "IV"): # sweep current on ChA and reads voltage
+        keithley_GPIB.keithley_current_mode("a", display = "DCVOLTS")
+        header = ["Current (mA)", "Voltage (V)"]
+        sweep_function.IV_sweep(full_path, header, 
+                                start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
+        
+        ###----------------- plot the sweep -------------
+        x_label = "Current (mA)"
+        y_label_Left = "Voltage (V)"
+        
+        x_min, x_max =0, 1
+        y_min, y_max = 0, 5
+  
+        I,V,P = fl.read_csv_file(full_path)
+        #P = P*1e0
+        file_path = file_directory
+        figname = filename
+        myplt.plot_IV(file_path,figname, I, V, x_label, y_label_Left, x_min, x_max,y_min, y_max,auto_range_xy = False)
+    
+    elif (select_sweep_type[sweep_index] == "VI"): # sweep voltage on ChA, reads current
+        header = ["Voltage (V)","Current (mA)"]
+        # set the keithley voltahe mode and read current
+        #Voltage range 40V, Curruent range to 100mA
+        keithley_GPIB.keithley_voltage_mode("a", display = "DCAMPS")
+
+
+        sweep_function.VI_sweep(full_path, header, 
+                                start_value = voltage_start_value, 
+                                stop_value = voltage_stop_value, 
+                                step_size = voltage_step_size, 
+                                current_limit = current_limit)
+        ###----------------- plot the sweep -------------
+        
+        x_label = "Voltage (V)"
+        y_label = "Current (mA)"
+        
+        x_min, x_max =0, 1
+        y_min, y_max = 0, 5
+  
+        I,V,P = fl.read_csv_file(full_path)
+        #P = P*1e0
+        file_path = file_directory
+        figname = filename
+        myplt.plot_IV(file_path,figname, I, V, x_label, y_label, x_min, x_max,y_min, y_max,auto_range_xy = False)
+    
+
+    else: 
+        print(" No sweep selected !!!")
+
+    
             
     
     keithley_inst.close()
@@ -233,7 +279,7 @@ if __name__ == "__main__":
     #TF.list_device_GPIB()
     #TF.keithley_setVoltageChA(gpib_index,addr)
     #TF.probe_alingmment_test(gpib_index,addr)
-    #TF.keithley_test(gpib_index,addr) 
+    #TF.keithley_setVoltageChA(gpib_index,addr) 
     #get_current_In_ChB  ()  
     #plot_test()
     #keithley_test()
@@ -241,4 +287,6 @@ if __name__ == "__main__":
     #TF.thorlab_PM100D_test()
     #get_current_In_ChB()
     #keithley_function()
+    
+    #TF.keithley_change_mode(gpib_index, addr)
 

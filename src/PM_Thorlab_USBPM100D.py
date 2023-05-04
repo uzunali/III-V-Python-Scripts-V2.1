@@ -46,15 +46,17 @@ class Thorlab_100D():
         print(c_char_p(message.raw).value)
         
         #resetting wavlength by a random value
-        wavelength = c_double(1800)
+        wavelength = self.wavelength
+        wavelength = 1200
+        wavelength = c_double(wavelength)
         wl = self.tlPM.setWavelength(wavelength)
         print(wl)
         time.sleep(1)
         #set the wavelength to be measured
-        wavelength = self.wavelength
-        wavelength = c_double(wavelength)
-        wl = self.tlPM.setWavelength(wavelength)
-        print(wl)
+        
+        #wavelength = c_double(wavelength)
+        #wl = self.tlPM.setWavelength(wavelength)
+        #print(wl)
     
     def get_power_reading(self):
         #tlPM = TLPM()

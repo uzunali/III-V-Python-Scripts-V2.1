@@ -38,6 +38,9 @@ class smu26xx():
     SPEED_MED = 0.1
     SPEED_NORMAL = 1
     SPEED_HI_ACCURACY = 10
+    
+    voltage_ranges = [0.1, 1, 6, 40]
+    current_ranges = [1E-7, 1E-6, 1E-5, 1E-4, 1E-3, 1E-2, 1E-1, 1, 3]
 
 
     def __init__(self,inst):
@@ -188,6 +191,7 @@ class smu26xx():
             CURRENT_MODE = 'DCAMPS'
         """
         cmd = 'smu' + str(channel) + '.source.func = ' + 'smu' + str(channel) + '.OUTPUT_' + str(mode)
+        self.smu_write(cmd)
 
     def set_range(self, channel, unit, range):
         # set the source range
@@ -202,7 +206,58 @@ class smu26xx():
         # set the measurement range
         cmd = 'smub.measure.range' + 'i' + ' = ' + str(rg)
         self.smu_write(cmd)
+    
+    def keithley_current_mode(self, channel, display):
+        """
+        Sets the channel into current source mode.
         
+        In this mode you set the current and can measure voltage, resistance and power.
+            DISPLAY_VOLTAGE = 'DCVOLTS'
+            DISPLAY_CURRENT = 'DCAMPS'
+            DISPLAY_RESISTANCE = 'OHMS'
+            DISPLAY_POWER = 'WATTS'
+        """
+        self.set_mode(channel=channel, mode=self.CURRENT_MODE)
+    
+        self.set_display(channel=channel, function = display)
+        
+        # set the source range
+        unit = "i"
+        rng = 1E-0
+        cmd = 'smu' + str(channel) + '.source.range' + str(unit) + ' = ' + str(rng)
+        self.smu_write(cmd)
+
+        # set the measurement range
+        unit = "v"
+        rng = 40
+        cmd = 'smu' + str(channel) + '.measure.range' + str(unit) + ' = ' + str(rng)
+        self.smu_write(cmd)
+        
+    def keithley_voltage_mode(self, channel, display):
+        """
+        Sets the channel into voltage source mode.
+        
+        In this mode you set the voltage and can measure current, resistance and power.
+            DISPLAY_VOLTAGE = 'DCVOLTS'
+            DISPLAY_CURRENT = 'DCAMPS'
+            DISPLAY_RESISTANCE = 'OHMS'
+            DISPLAY_POWER = 'WATTS'
+        """
+        self.set_mode(channel=channel, mode=self.VOLTAGE_MODE)
+    
+        self.set_display(channel=channel, function = display)
+        
+        # set the source range
+        unit = "v"
+        rng = 40
+        cmd = 'smu' + str(channel) + '.source.range' + str(unit) + ' = ' + str(rng)
+        self.smu_write(cmd)
+
+        # set the measurement range
+        unit = "i"
+        rng = 1e-0
+        cmd = 'smu' + str(channel) + '.measure.range' + str(unit) + ' = ' + str(rng)
+        self.smu_write(cmd)
         
 
 

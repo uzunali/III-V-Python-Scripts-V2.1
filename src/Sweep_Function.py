@@ -21,44 +21,50 @@ class IV_Sweep():
         self.thorlab_PM = thorlab_PM
     
         
+
     def IV_sweep(self, filename, header, start_value, stop_value, step_size, voltage_limit = 3): 
         """
-            Sweep current in channel A and measure volatage on the same channel.
+        Sweep current in channel A and measure volatage, get current reading from channel B 
+        It could be photocurrent reading in which photodetector directly connected to Channel B of Keithley
+        Or Analog Out of Power meter connedted to channel B of Keithley.
+        
+        R: responsivity of photodetector (0.65 for 818 IR Ge Detector)
+        header: [Current, Voltage, Power]
+        start_value = (Integer) Current sweep start ie. 0 
+        stop_value = (Iteger) Current sweep stop value ie. 100 for 100mA 
     
         """
         self.keithley_GPIB.set_limit(channel = "a", unit = "v", value = voltage_limit)
         
-
-        value_i = None
+        # Turn ON Channel A and B
+        self.keithley_GPIB.turn_ON('a')
         
-        self.save_data.save_to_csv_file(filename, header[:2], header_flag=True) # add the header for file    value = start_value
+        
+        self.save_data.save_to_csv_file(filename,header, header_flag=True) # add the header for file
         value_i = start_value
         while value_i <= stop_value:
             
-            self.keithley_GPIB.set_current_ChA(value_i*current_unit)
-            #keithley_GPIB.set_voltage_ChA(value_i)
+            self.keithley_GPIB.set_current('a',value_i*1e-3)
             
-            self.keithley_GPIB.turn_ON_ChA()       
             time.sleep(keithley_sleep_time)
                 
-            #currenta = self.keithley_GPIB.get_current_ChA()
-            voltageA = self.keithley_GPIB.get_voltage_ChA()
+            voltagea = self.keithley_GPIB.get_voltage("a")
+    
                    
-            print("I=%s mA, V=%s V \n" %(value_i, voltageA))
-
-                
-            data = [value_i, voltageA]
+            print("I=%s mA, V=%s V \n" %(value_i, voltagea))    
+        
+            data = [value_i, voltagea ]
             self.save_data.save_to_csv_file(filename, data, header_flag = False)
-            value_i = value_i + step_size  
+            value_i = value_i + step_size      
+        
+        #print threshold
+        # {k: v for k, v in sorted(threshold.items(),reverse=True, key=lambda item: item[1])}
+        self.keithley_GPIB.set_voltage("a",0)   
+        self.keithley_GPIB.set_current("a",0) 
     
-        #self.keithley_GPIB.set_voltage_ChA(0)   
-        self.keithley_GPIB.set_current_ChA(0) 
-        #keithley_GPIB.set_voltage_ChB(0)  
-        self.keithley_GPIB.turn_OFF_ChA()
-        self.keithley_GPIB.turn_OFF_ChB()
-        #terminate connection       
-        #self.initialize_connection.terminate_connection()
-    
+        # turn OFF channels 
+        self.keithley_GPIB.turn_OFF('a')
+        
         # close the file
         self.save_data.close_file()
     
@@ -67,39 +73,41 @@ class IV_Sweep():
             Sweep voltage in channel A and measure current on the same channel.
     
         """
-        self.keithley_GPIB.set_limit(channel = "a", unit = "a", value = current_limit*current_unit)
+        self.keithley_GPIB.set_limit(channel = "a", unit = "i", value = current_limit*1e-3)
         
-        value_i = None
-        header = header[:2].sort(reverse=True)
-        self.save_data.save_to_csv_file(filename, header, header_flag=True) # add the header for file    value = start_value
+        # Turn ON Channel A and B
+        self.keithley_GPIB.turn_ON('a')
+        
+        
+        self.save_data.save_to_csv_file(filename,header, header_flag=True) # add the header for file
         value_i = start_value
         while value_i <= stop_value:
             
-            #self.keithley_GPIB.set_current_ChA(value_i)
-            self.keithley_GPIB.set_voltage_ChA(value_i)
+            self.keithley_GPIB.set_voltage('a',value_i)
             
-            self.keithley_GPIB.turn_ON_ChA()       
             time.sleep(keithley_sleep_time)
                 
-            #currenta = self.keithley_GPIB.get_current_ChA()
-            currentA = self.keithley_GPIB.get_current_ChA()
+            currenta = self.keithley_GPIB.get_current("a")
+    
                    
-            print("V=%s V , I=%s mA \n" %(value_i, currentA))
-
-                
-            data = [value_i, currentA ]
+            print("V=%s V, I=%s A \n" %(value_i, currenta))    
+        
+            data = [value_i, currenta]
             self.save_data.save_to_csv_file(filename, data, header_flag = False)
-            value_i = value_i + step_size  
+            
+            value_i = value_i + step_size      
+        
+        #print threshold
+        # {k: v for k, v in sorted(threshold.items(),reverse=True, key=lambda item: item[1])}
+        self.keithley_GPIB.set_voltage("a",0)   
+        #self.keithley_GPIB.set_current("a",0) 
     
-        self.keithley_GPIB.set_voltage_ChA(0)   
-        #self.keithley_GPIB.set_current_ChA(0) 
-        #keithley_GPIB.set_voltage_ChB(0)  
-        self.keithley_GPIB.turn_OFF_ChA()
-        #terminate connection       
-        self.initialize_connection.terminate_connection()
-    
+        # turn OFF channels 
+        self.keithley_GPIB.turn_OFF('a')
+        
         # close the file
         self.save_data.close_file()
+       
     
     
     def get_threshold(self, pre_power, cur_power):

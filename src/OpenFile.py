@@ -43,14 +43,18 @@ class OpenFile():
 
     def read_csv_file(self, filename):
         df = pd.read_csv (filename)
-        df.columns = ['Current', 'Voltage','Power']
-        
+        P = []
+        try:
+            df.columns = ['Current', 'Voltage','Power']
+            P = df['Power']*1e0
+        except:
+            ValueError
+            df.columns = ['Current', 'Voltage']
+                    
         I = df['Current']*1e0
         V = df['Voltage']
-        try:
-            P = df['Power']*1e0
-        except (KeyError):
-            P = []
+
+            
         return(I,V,P)
 
     def get_files_path(self):

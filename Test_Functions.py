@@ -92,10 +92,15 @@ def keithley_setVoltageChA(gpib_index,addr):
     inst = initialize_connection.connect_device(gpib_index, addr) # connect to device#
 
     # create an object
+    v = -0.2
     keithley_GPIB =  smu26xx(inst)
-    keithley_GPIB.set_limit("a", "v", 3)
+    #keithley_GPIB.set_limit("a", "v", 3)
     #keithley_GPIB.reset("b")
+    keithley_GPIB.set_limit(channel = "a", unit = "i", value = 50e-3)
+    keithley_GPIB.set_voltage('a',v)
     keithley_GPIB.turn_ON_ChA() 
+    currenta = keithley_GPIB.get_current("a")
+    print(f"Set V:{v}, I:{currenta} ")
     # set_cur = 20
     # keithley_GPIB.set_current_ChA(set_cur*1e-3)
     keithley_GPIB.turn_OFF_ChA()
@@ -131,6 +136,26 @@ def probe_alingmment_test(gpib_index,addr):
     # newport_PM.close_connection()
     return()
      
+
+def keithley_change_mode(gpib_index,addr):
+    initialize_connection = Initialize_GPIB()
+    #gpib_index = 0
+    #addr = 26 # change it if necessery
+    inst = initialize_connection.connect_device(gpib_index, addr) # connect to device#
+
+    # create an object
+    v = -0.2
+    keithley_GPIB =  smu26xx(inst)
+    
+    #keithley_GPIB.set_mode(channel="a", mode="DCAMPS")
+    #keithley_GPIB.set_mode(channel="a", mode="DCVOLTS")
+    
+    #keithley_GPIB.set_display(channel="a", function="DCVOLTS")
+    #keithley_GPIB.keithley_current_mode("a", display = "DCVOLTS")
+    
+    keithley_GPIB.keithley_voltage_mode("a", display = "DCAMPS")
+    
+
 
 
   
