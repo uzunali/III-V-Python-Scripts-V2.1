@@ -8,7 +8,8 @@ Created on Thu Apr  7 15:24:06 2022
 import sys
 #sys.path.append("\\\\fs1\\Docs2\\ali.uzun\\My Documents\\My Files\\Scripts\\Python\\III-V Scripts\\src\\")
 import pandas as pd
-import time
+from datetime import datetime
+
 
 from src.Keithley26xx_GPIB import smu26xx
 from src.Initialize_Connection import Initialize_GPIB
@@ -33,7 +34,7 @@ myplt = MyPlots()
 
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
-addr = 26 # change it if necessery
+addr = 28 # change it if necessery
 #addr = 28 # change it if necessery
     
 
@@ -42,32 +43,54 @@ addr = 26 # change it if necessery
 # ----- YOUR BASE DIRECTORY ---------
 measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 23' 
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
-save_to_folder = r"2023-05-02 QDL Run N-Metal" 
+save_to_folder = r"AU2eQ4\2023-06-26 AU2eQ4 QDL on Si + BCB" 
 # save_to_folder = r"Test" 
 # save_to_folder = r"2023-01-31 MTP4"
 # save_to_folder = r"Test"
-#save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" 
+save_to_folder = r"\AU4bQ3\OnGaAs" 
 
 power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"None"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 3  # 0 - 1 - 2
+power_index = 0  # 0 - 1 - 2
 
 select_sweep_type = {0:"LIV",1:"IV", 2:"VI"}
 # 0 for LIV, 1 for IV, 2 for VI 
-sweep_index = 1 # 0 - 1 - 2
+sweep_index = 0 # 0 - 1 - 2
 
+sweep_type = select_sweep_type[sweep_index]
 ####------- Responsivity of Newport 818IR detector
 R = 0.67 # Calibrated on 03-11-2022
 #R = 1
 #R = 0.72 
 
+
+### --- Date and Time ---##
+# current dateTime
+now = datetime.now()
+# convert to string
+date_time = now.strftime("%Y-%m-%d %H-%M-%S") 
+#date_time = "aaa"
+
 #filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
-
-filename = "AU2eQ1-Top N-Metal TLM_R-175um_IV-Sweep_Ring-1"
-#filename = "AU2eQ1-Probe-TEST-on-same-metal-IV-2"
-filename = "TEST"
-
+T = 20
+CL = "1.2mm"
+RW = "2.5um"
+DevID = 2
+DevIdentifier = "AU4bQ3-QDL-on GaAs-EF-HR" #+"-Top Contact n-from3umlaser"
 file_record_index = 1
+
+filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_{sweep_type}_T{T}C"
+# filename = f"AU2eQ1-Anneal-380C-420Cx2-{sweep_type}-Mid_CTLM-Sweep_Ring-4M"
+
+#filename = f"AU2eQ4_EF Al HR_CL1mm_RW3.5um_Laser on GaAs_{sweep_type}"
+chip = "AU2eQ1"
+chip = "AU4bQ3"
+#E2N41
+#filename = f"{chip}-AfterBondMetal-M1N21-dev1"
+#filename = f"{chip}-AfterBondMetal-PM TLM-15um Gap-R4"
+#filename = f"{chip}-AfterBondMetal-1mm EF 2.5um"
+# filename = "TEST"
+
 
 if(power_index == 0):
     filename = filename + "_%s_R-%s_r%s.csv" % (power_reading_from[power_index],str(R),str(file_record_index))
@@ -84,15 +107,15 @@ print(full_path)
 
 
 #### ----- CURRENT SWEEP SETTINGS ---------
-voltage_limit = 4.50 # V
-current_start_value = -100
-current_stop_value = 100 #mA
+voltage_limit = 4.0 # V
+current_start_value = 0
+current_stop_value = 200 #mA
 current_step_size = 2 #mA
 
 
 #### ----- VOLTAGE SWEEP SETTINGS ---------
-current_limit = 100 # mA
-voltage_start_value = -1
+current_limit = 200 # mA
+voltage_start_value = 1
 voltage_stop_value = 1 # V
 voltage_step_size = 0.05 # V
 
@@ -225,20 +248,22 @@ def main(): #voltage_limit,start_value,stop_value,step_size
                                 start_value = current_start_value, stop_value = current_stop_value, step_size = current_step_size, voltage_limit = voltage_limit)
         
         ###----------------- plot the sweep -------------
+        I,V,P = fl.read_csv_file(full_path)
+        
         x_label = "Current (mA)"
         y_label_Left = "Voltage (V)"
         
         x_min, x_max =0, 1
         y_min, y_max = 0, 5
   
-        I,V,P = fl.read_csv_file(full_path)
+        
         #P = P*1e0
         file_path = file_directory
         figname = filename
         myplt.plot_IV(file_path,figname, I, V, x_label, y_label_Left, x_min, x_max,y_min, y_max,auto_range_xy = False)
     
     elif (select_sweep_type[sweep_index] == "VI"): # sweep voltage on ChA, reads current
-        header = ["Voltage (V)","Current (mA)"]
+        header = ["Voltage (V)","Current (A)"]
         # set the keithley voltahe mode and read current
         #Voltage range 40V, Curruent range to 100mA
         keithley_GPIB.keithley_voltage_mode("a", display = "DCAMPS")
@@ -252,13 +277,14 @@ def main(): #voltage_limit,start_value,stop_value,step_size
         ###----------------- plot the sweep -------------
         
         x_label = "Voltage (V)"
-        y_label = "Current (mA)"
+        y_label = "Current (A)"
         
         x_min, x_max =0, 1
         y_min, y_max = 0, 5
   
         I,V,P = fl.read_csv_file(full_path)
-        #P = P*1e0
+        #V = P*1e3
+        
         file_path = file_directory
         figname = filename
         myplt.plot_IV(file_path,figname, I, V, x_label, y_label, x_min, x_max,y_min, y_max,auto_range_xy = False)
