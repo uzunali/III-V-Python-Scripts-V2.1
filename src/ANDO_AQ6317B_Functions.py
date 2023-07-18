@@ -1,4 +1,5 @@
 import pyvisa
+#t_list_cmds = ['CTRWL', 'SPAN', 'REFL', 'LSCL', 'RESLN', 'AVG', 'SEGP', 'SENS', 'MONO', 'TR' + trace]
 
 rm = pyvisa.ResourceManager()
 print(rm.list_resources())
@@ -18,13 +19,18 @@ print(OSA.query("*IDN?")) # Check to make sure it is OSA
 #OSA.write("SGL") #single scan
 
 
-def set_sweep_parameter(OSA,centre_wavelength, span, num_of_sample, resoultion,scan):
+def set_sweep_parameter(OSA,centre_wavelength, span, num_of_sample, scan, resoultion, sensitivity):
     OSA.write(f"CTRWL {centre_wavelength}") #specify center wl
     OSA.write(f"SPAN {span}") #span of measurement
     OSA.write(f"SMPL {num_of_sample}") #samplying number
     OSA.write(f"RESLN {resoultion}") #resolution in nm
     OSA.write(f"{scan}") #repeat or single scans
+    OSA.write(f"SENS {sensitivity}") #resolution in nm
+    
 
-set_sweep_parameter(OSA, 1290, 20, 5001, 1, "RPT")
+align_true = 0
+if (align_true):
+    set_sweep_parameter(OSA, 1295, 20, 5001, "RPT", 1)
 
-#set_sweep_parameter(OSA, 1280, 20, 10001, 0.001, "SGL")
+else:
+    set_sweep_parameter(OSA, 1300, 40, 10001, "SGL", 0.01, 1)

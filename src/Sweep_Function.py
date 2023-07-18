@@ -127,6 +127,7 @@ class IV_Sweep():
     
         """
         self.keithley_GPIB.set_limit(channel = "a", unit = "v", value = voltage_limit)
+        self.keithley_GPIB.set_range_ChB(rg = 1E-1)
         
         # Turn ON Channel A and B
         self.keithley_GPIB.turn_ON('a')

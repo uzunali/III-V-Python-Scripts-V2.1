@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 from tkinter import filedialog, Tk
 import os, csv, glob 
+import numpy as np
 
 
 class MyPlots():
@@ -187,16 +188,13 @@ class MyPlots():
         lstyle = 0
         plt.plot(x, y, color = "blue", linewidth = lwidth,linestyle = self.line_style[lstyle])
         
-        # x_min, x_max = 1280, 1300
-        # y_min, y_max = -85, -10
+        slope_range= (-75,75)
         
-        #plt.xlim([x_min, x_max])
-        #plt.ylim([y_min, y_max])
-        # #plt.figure(dpi=300,figsize=(6, 8))
-        
-        # axis_value_fontsize = 10
-        #plt.xticks(fontsize = axis_value_fontsize)
-        #plt.yticks(fontsize = axis_value_fontsize)
+        slope, c = self.get_slope_LIV(x, y, slope_range)
+        #Yslope = slope*Is + c
+        #plt.plot(Is, Yslope,color= "red",linewidth = 3, linestyle ='--')
+        plt.text(75,1,"Slope is %f"%(slope))
+        print(f"{fl}-Slope: {slope}, Constant: {c}")
         
         
         #plt.title(f'{fl}')
@@ -204,7 +202,7 @@ class MyPlots():
         plt.show()
         
         # plt_name = "T1"
-        #self.save_plot(file_path, fl, fig)
+        self.save_plot(file_path, fl, fig)
         
         # fl = "220805_1.8mm_1pMIR_LIV"
         # fig.savefig(f'{fl}.jpg',
@@ -314,6 +312,18 @@ class MyPlots():
         P = df["Power"]
 
         return(P,W)
+    
+    def get_slope_LIV(self, x, y, slope_range = (0, None)):
+        """
+        return the slope of line for given interval
+        ie. slope efficiency and resistance
+        """
+        start, end = slope_range
+        if (end != None):
+            x = x[start:end]
+            y = y[start:end]
+        m, b = np.polyfit(x, y, 1) # m = slope, b = intercept
+        return (m,b)
             
         
 

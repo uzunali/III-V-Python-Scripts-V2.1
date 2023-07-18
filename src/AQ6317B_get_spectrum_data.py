@@ -15,29 +15,51 @@ import time
 from datetime import date
 from datetime import datetime
 import pandas as pd
+from datetime import datetime
 
+
+now = datetime.now()
+# convert to string
+date_time = now.strftime("%Y-%m-%d %H-%M-%S") 
 
 #Set path for file to be saved to 
 #path ="\\10.204.28.1\docs2\owen.moynihan\My Documents\Project work\Test programs\Python Files\OSA\Take spectrum"
 # ----- YOUR BASE DIRECTORY ---------
 #measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
-measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 22' + "\\"
+measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurements\Caladan\Caladan 23' 
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 #save_to_folder = "Run-2 do6209\\2022-11-03 1.5 mm 1pMIR&EF\\"
 save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" + "\\"
+save_to_folder = r"AU2eQ4\2023-06-26 AU2eQ4 QDL on Si + BCB" 
 
-measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
-save_to_folder = "Run-2 do6209\\2022-12-19\\"
-save_to_folder =  "Run-1 do5960\\2022-12-20\\"
+save_to_folder = r"\AU4bQ3\OnGaAs" 
+
+# measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
+# save_to_folder = "Run-2 do6209\\2022-12-19\\"
+# save_to_folder =  "Run-1 do5960\\2022-12-20\\"
+T = 60
+CL = "1.8mm"
+RW = "2.5um"
+DevID = 2
+DevIdentifier = "AU4bQ3-QDL-on GaAs-EF-HR" #+"-Top Contact n-from3umlaser"
+
+Idrive = 80 #mA
+span = 40 # nm
+#filename = "Run1-do5960_EF-Laser_CL-2.0mm_RW-3.0um_dev2_SPT_%smA.csv"%Idrive
+#filename = f"AU2eQ4_EF Al HR_CL1mm_RW3.5um_Laser on GaAs_SPT_{Idrive}_40nmSpan.csv"
 
 
-Idrive = 100
-filename = "Run1-do5960_EF-Laser_CL-2.0mm_RW-3.0um_dev2_SPT_%smA.csv"%Idrive
+file_record_index = 1
+
+filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
+
 #filename = "TEST"
-full_path = measurement_base_path + save_to_folder + filename
-print(full_path)
+#full_path = measurement_base_path + save_to_folder + filename
 
 file_directory = measurement_base_path + save_to_folder # Folder the filde will be saved
+file_directory = measurement_base_path + "\\"+ save_to_folder + "\\" # Folder the filde will be saved
+full_path = file_directory + filename # full path for file
+print(full_path)
 
 #path = file_directory + filename # full path for file
 #r_path = fp + filename # Folder the filde will be saved
