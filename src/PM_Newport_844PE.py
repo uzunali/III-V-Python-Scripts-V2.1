@@ -67,7 +67,7 @@ class Newport_844_PE:
             while data ==():		# if any data available, print the first one from the batch
                 #print('Reading = {0}, TimeStamp = {1}, Status = {2} '.format(data[0][0] ,data[1][0] ,data[2][0]))
                 print('\n Range Change in Power Meter!!!')
-                time.sleep(.2)
+                time.sleep(.5)
                 data = self.OphirCOM.GetData(self.DeviceHandle, 0)
             return(data[0][0])
 

@@ -144,7 +144,11 @@ class IV_Sweep():
             voltagea = self.keithley_GPIB.get_voltage("a")
     
             # correct sing in reading
+            
             currentb = -1*self.keithley_GPIB.get_current("b")
+            #if (currentb >0):
+            #    currentb = currentb*1
+            #currentb = abs(self.keithley_GPIB.get_current("b"))
 
             # Photocurrent to mW convertion
             currentb = currentb/R
@@ -195,7 +199,16 @@ class IV_Sweep():
                 
             voltagea = self.keithley_GPIB.get_voltage("a")
   
-            currentb = self.newport_PM.get_data()
+            try:    
+                currentb = self.newport_PM.get_data()[0][0]
+            except:
+                for i in range(5):
+                    time.sleep(0.5)
+                    try:    
+                        currentb = self.newport_PM.get_data()[0][0]
+                    except:
+                        currentb = None
+                    
                    
             print("I=%s mA, V=%s V, P=%s \n" %(value_i, voltagea, currentb))    
         
@@ -246,7 +259,16 @@ class IV_Sweep():
             voltagea = self.keithley_GPIB.get_voltage("a")
             
             if (power_meter == "Newport_PM"):
-                currentb = self.newport_PM.get_data()
+                #currentb = self.newport_PM.get_data()
+                try:    
+                    currentb = self.newport_PM.get_data()
+                except:
+                    for i in range(5):
+                        time.sleep(0.5)
+                        try:    
+                            currentb = self.newport_PM.get_data()
+                        except:
+                            currentb = None
                 
             elif (power_meter == "Thorlab_PM"):
                 currentb = self.thorlab_PM.get_power_reading()

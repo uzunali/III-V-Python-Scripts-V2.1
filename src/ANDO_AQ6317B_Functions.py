@@ -30,7 +30,7 @@ def set_sweep_parameter(OSA,centre_wavelength, span, num_of_sample, scan, resoul
 
 align_true = 0
 if (align_true):
-    set_sweep_parameter(OSA, 1295, 20, 5001, "RPT", 1)
+    set_sweep_parameter(OSA, 1295, 10, 5001, "RPT", 1, 1)
 
 else:
-    set_sweep_parameter(OSA, 1300, 40, 10001, "SGL", 0.01, 1)
+    set_sweep_parameter(OSA, 1280, 140, 10001, "SGL", 0.01, 1)

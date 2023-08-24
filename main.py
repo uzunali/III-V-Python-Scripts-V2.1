@@ -34,8 +34,10 @@ myplt = MyPlots()
 
 #####-------------- Keithley Settings -----------####
 gpib_index = 0
-addr = 28 # change it if necessery
-#addr = 28 # change it if necessery
+addr = 28 # C107 Laser Pulse Setuo Cange it if necessery
+# Vertical Coupling Setup
+gpib_index = 1
+addr = 26
     
 
 ##### ------ INPUTs -------- #####
@@ -45,13 +47,15 @@ measurement_base_path = r'\\FS1\Docs2\ali.uzun\My Documents\My Files\Measurement
 # ----- FOLDER UNDER BASE DIRECTORY --------- 
 save_to_folder = r"AU2eQ4\2023-06-26 AU2eQ4 QDL on Si + BCB" 
 # save_to_folder = r"Test" 
-# save_to_folder = r"2023-01-31 MTP4"
+save_to_folder = r"AU4bQ3\2023-08-08 CF-AR"
 # save_to_folder = r"Test"
-save_to_folder = r"\AU4bQ3\OnGaAs" 
+save_to_folder = r"AU2eQ2-DFB" 
+save_to_folder = f"AU4bQ3-Batch 1\On Si + Patterned Intervia"
+save_to_folder = r"2023-08-23 SOIs"
 
 power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"None"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 0  # 0 - 1 - 2
+power_index = 1  # 0 - 1 - 2
 
 select_sweep_type = {0:"LIV",1:"IV", 2:"VI"}
 # 0 for LIV, 1 for IV, 2 for VI 
@@ -70,21 +74,28 @@ now = datetime.now()
 # convert to string
 date_time = now.strftime("%Y-%m-%d %H-%M-%S") 
 #date_time = "aaa"
-
+trench_dict = {8:"ST2", 7: "ST1", 6 : "DT2", 5 : "DT1", 4 : "TT2",3 : "TT1",2 : "DT MMI", 1 : "AT"}
 #filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
-T = 20
-CL = "1.2mm"
-RW = "2.5um"
-DevID = 2
-DevIdentifier = "AU4bQ3-QDL-on GaAs-EF-HR" #+"-Top Contact n-from3umlaser"
+T = 80
+CL = "2.0mm"
+RW = "3.0um"
+DevID = 4
+#DevLabel ="CleavedFacet-MIR6.0x56um" + "P-N Top Contact"
+DevLabel ="E1W23"
+#DevLabel ="M1N23 6.5x48"
+Trench_ID = 7
+Trench_Design_ID = 1
+DevIdentifier = f"Sample 12-AU4bQ4 Batch2-QDL on SOI-{DevLabel}_SOI Right {trench_dict[Trench_ID]}-D{Trench_Design_ID}" #+"-Top Contact n-from3umlaser"
+#DevIdentifier = f"Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-{DevLabel}_{sweep_type}_T{T}C" #+"-Top Contact n-from3umlaser"
+
 file_record_index = 1
 
-filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_{sweep_type}_T{T}C"
-# filename = f"AU2eQ1-Anneal-380C-420Cx2-{sweep_type}-Mid_CTLM-Sweep_Ring-4M"
+#filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_{sweep_type}_T{T}C"
+filename = f"{date_time}_{DevIdentifier}_{sweep_type}"
+#filename = "Probe Resistance Sweep"
 
 #filename = f"AU2eQ4_EF Al HR_CL1mm_RW3.5um_Laser on GaAs_{sweep_type}"
-chip = "AU2eQ1"
-chip = "AU4bQ3"
+
 #E2N41
 #filename = f"{chip}-AfterBondMetal-M1N21-dev1"
 #filename = f"{chip}-AfterBondMetal-PM TLM-15um Gap-R4"
@@ -107,7 +118,7 @@ print(full_path)
 
 
 #### ----- CURRENT SWEEP SETTINGS ---------
-voltage_limit = 4.0 # V
+voltage_limit = 6.50 # V
 current_start_value = 0
 current_stop_value = 200 #mA
 current_step_size = 2 #mA

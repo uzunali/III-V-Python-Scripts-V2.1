@@ -33,18 +33,26 @@ save_to_folder = r"DFB Laser\DFB-1\2022-11-24 Chip4 1.8-1.9mm" + "\\"
 save_to_folder = r"AU2eQ4\2023-06-26 AU2eQ4 QDL on Si + BCB" 
 
 save_to_folder = r"\AU4bQ3\OnGaAs" 
+save_to_folder = r"AU4bQ3\2023-08-08 CF-AR"
+save_to_folder = "2023-08-23 SOIs"
 
 # measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
 # save_to_folder = "Run-2 do6209\\2022-12-19\\"
 # save_to_folder =  "Run-1 do5960\\2022-12-20\\"
-T = 60
-CL = "1.8mm"
+T = 20
+CL = "1.2mm"
 RW = "2.5um"
-DevID = 2
-DevIdentifier = "AU4bQ3-QDL-on GaAs-EF-HR" #+"-Top Contact n-from3umlaser"
+DevID = 1
+#DevLabel ="CleavedFacet-MIR6.0x56um" + "P-N Top Contact"
+DevLabel ="Cleaved Facet-HR"
+DevIdentifier = f"AU4bQ3-QDL-on GaAs-{DevLabel}" #+"-Top Contact n-from3umlaser"
+DevIdentifier = f"AU4bQ3-QDL-on GaAs-CF" #+"-Top Contact n-from3umlaser"
+DevIdentifier = "Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-E2N33"
+DevLabel ="Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-M1N23 6.5x48"
 
-Idrive = 80 #mA
-span = 40 # nm
+
+Idrive = 100 #mA
+span = 20 # nm
 #filename = "Run1-do5960_EF-Laser_CL-2.0mm_RW-3.0um_dev2_SPT_%smA.csv"%Idrive
 #filename = f"AU2eQ4_EF Al HR_CL1mm_RW3.5um_Laser on GaAs_SPT_{Idrive}_40nmSpan.csv"
 
@@ -52,6 +60,9 @@ span = 40 # nm
 file_record_index = 1
 
 filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
+filename = f"{date_time}_{DevIdentifier}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
+
+
 
 #filename = "TEST"
 #full_path = measurement_base_path + save_to_folder + filename
@@ -101,11 +112,11 @@ wl_float.pop(0) # taking out first term - not a data point
 
 fig,ax = plt.subplots()
 x_min, x_max = 1270, 1310
-plt.xlim([x_min, x_max])
+#plt.xlim([x_min, x_max])
       
             #y_min, y_max = -0, 26
 y_min, y_max = -85,-30
-plt.ylim([y_min, y_max])
+#plt.ylim([y_min, y_max])
 #PLOTTING SPECTRUM
 plt.plot(wl_float, spectrum_float, linewidth = 0.4)
 plt.xlabel("Wavelength (nm)")
