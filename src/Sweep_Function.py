@@ -174,64 +174,64 @@ class IV_Sweep():
         # close the file
         self.save_data.close_file()
         
-    def LIV_sweep_NewportPM(self, filename, header, start_value, stop_value, step_size, voltage_limit = 3): 
-        """
-        Sweep current in channel A and measure volatage, get current reading from channel B 
-        It could be photocurrent reading in which photodetector directly connected to Channel B of Keithley
-        Or Analog Out of Power meter connedted to channel B of Keithley.
+    # def LIV_sweep_NewportPM(self, filename, header, start_value, stop_value, step_size, voltage_limit = 3): 
+    #     """
+    #     Sweep current in channel A and measure volatage, get current reading from channel B 
+    #     It could be photocurrent reading in which photodetector directly connected to Channel B of Keithley
+    #     Or Analog Out of Power meter connedted to channel B of Keithley.
 
-        header: [Current, Voltage, Power]
-        start_value = (Integer) Current sweep start ie. 0 
-        stop_value = (Iteger) Current sweep stop value ie. 100 for 100mA 
+    #     header: [Current, Voltage, Power]
+    #     start_value = (Integer) Current sweep start ie. 0 
+    #     stop_value = (Iteger) Current sweep stop value ie. 100 for 100mA 
     
-        """
-        self.keithley_GPIB.set_limit(channel = "a", unit = "v", value = voltage_limit)
-        self.keithley_GPIB.set_current('a',0)
-        self.keithley_GPIB.turn_ON('a')
-        self.save_data.save_to_csv_file(filename,header, header_flag=True) # add the header for file
-        value_i = start_value
-        while value_i <= stop_value:
+    #     """
+    #     self.keithley_GPIB.set_limit(channel = "a", unit = "v", value = voltage_limit)
+    #     self.keithley_GPIB.set_current('a',0)
+    #     self.keithley_GPIB.turn_ON('a')
+    #     self.save_data.save_to_csv_file(filename,header, header_flag=True) # add the header for file
+    #     value_i = start_value
+    #     while value_i <= stop_value:
             
-            # print("Set value is %f %s \n" % (value, unit))
-            self.keithley_GPIB.set_current('a',value_i*1e-3)
+    #         # print("Set value is %f %s \n" % (value, unit))
+    #         self.keithley_GPIB.set_current('a',value_i*1e-3)
             
-            time.sleep(keithley_sleep_time)
+    #         time.sleep(keithley_sleep_time)
                 
-            voltagea = self.keithley_GPIB.get_voltage("a")
+    #         voltagea = self.keithley_GPIB.get_voltage("a")
   
-            try:    
-                currentb = self.newport_PM.get_data()[0][0]
-            except:
-                for i in range(5):
-                    time.sleep(0.5)
-                    try:    
-                        currentb = self.newport_PM.get_data()[0][0]
-                    except:
-                        currentb = None
+    #         try:    
+    #             currentb = self.newport_PM.get_data()[0][0]
+    #         except:
+    #             for i in range(5):
+    #                 time.sleep(0.5)
+    #                 try:    
+    #                     currentb = self.newport_PM.get_data()[0][0]
+    #                 except:
+    #                     currentb = None
                     
                    
-            print("I=%s mA, V=%s V, P=%s \n" %(value_i, voltagea, currentb))    
+    #         print("I=%s mA, V=%s V, P=%s \n" %(value_i, voltagea, currentb))    
         
-            data = [value_i, voltagea,  currentb ]
-            self.save_data.save_to_csv_file(filename, data, header_flag = False)
-            value_i = value_i + step_size      
+    #         data = [value_i, voltagea,  currentb ]
+    #         self.save_data.save_to_csv_file(filename, data, header_flag = False)
+    #         value_i = value_i + step_size      
 
     
-        self.keithley_GPIB.set_voltage("a",0)   
-        self.keithley_GPIB.set_current("a",0) 
+    #     self.keithley_GPIB.set_voltage("a",0)   
+    #     self.keithley_GPIB.set_current("a",0) 
     
-        self.keithley_GPIB.set_voltage("b",0)
-        self.keithley_GPIB.set_current("b",0)  
+    #     self.keithley_GPIB.set_voltage("b",0)
+    #     self.keithley_GPIB.set_current("b",0)  
     
-        # turn OFF channels 
-        self.keithley_GPIB.turn_OFF('a')
-        self.keithley_GPIB.turn_OFF('b')
+    #     # turn OFF channels 
+    #     self.keithley_GPIB.turn_OFF('a')
+    #     self.keithley_GPIB.turn_OFF('b')
         
-        # close the file
-        self.save_data.close_file()
+    #     # close the file
+    #     self.save_data.close_file()
 
-        #close newport connecttion
-        self.newport_PM.close_connection()
+    #     #close newport connecttion
+    #     self.newport_PM.close_connection()
         
     def LIV_sweep_PM(self, filename, header, power_meter, start_value, stop_value, step_size, voltage_limit = 3): 
         """

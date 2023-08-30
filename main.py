@@ -36,8 +36,8 @@ myplt = MyPlots()
 gpib_index = 0
 addr = 28 # C107 Laser Pulse Setuo Cange it if necessery
 # Vertical Coupling Setup
-gpib_index = 1
-addr = 26
+# gpib_index = 1
+# addr = 26
     
 
 ##### ------ INPUTs -------- #####
@@ -49,13 +49,13 @@ save_to_folder = r"AU2eQ4\2023-06-26 AU2eQ4 QDL on Si + BCB"
 # save_to_folder = r"Test" 
 save_to_folder = r"AU4bQ3\2023-08-08 CF-AR"
 # save_to_folder = r"Test"
-save_to_folder = r"AU2eQ2-DFB" 
-save_to_folder = f"AU4bQ3-Batch 1\On Si + Patterned Intervia"
-save_to_folder = r"2023-08-23 SOIs"
+save_to_folder = r"AU2eQ2-DFB-Batch 2\2023-08-14 DFB R3"
+#save_to_folder = f"AU4bQ3-Batch 1\On Si + Patterned Intervia"
+#save_to_folder = r"2023-08-23 SOIs"
 
 power_reading_from = {0:"Keithley",1:"Newport_PM", 2:"Thorlab_PM", 3:"None"} # power meeter for optical power reading
 # 0 for Keithley_ChB, 1 for Newport_PM, 2 for Thorlab_PM 
-power_index = 1  # 0 - 1 - 2
+power_index = 0  # 0 - 1 - 2
 
 select_sweep_type = {0:"LIV",1:"IV", 2:"VI"}
 # 0 for LIV, 1 for IV, 2 for VI 
@@ -75,23 +75,26 @@ now = datetime.now()
 date_time = now.strftime("%Y-%m-%d %H-%M-%S") 
 #date_time = "aaa"
 trench_dict = {8:"ST2", 7: "ST1", 6 : "DT2", 5 : "DT1", 4 : "TT2",3 : "TT1",2 : "DT MMI", 1 : "AT"}
-#filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
-T = 80
-CL = "2.0mm"
-RW = "3.0um"
-DevID = 4
-#DevLabel ="CleavedFacet-MIR6.0x56um" + "P-N Top Contact"
-DevLabel ="E1W23"
-#DevLabel ="M1N23 6.5x48"
 Trench_ID = 7
 Trench_Design_ID = 1
-DevIdentifier = f"Sample 12-AU4bQ4 Batch2-QDL on SOI-{DevLabel}_SOI Right {trench_dict[Trench_ID]}-D{Trench_Design_ID}" #+"-Top Contact n-from3umlaser"
-#DevIdentifier = f"Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-{DevLabel}_{sweep_type}_T{T}C" #+"-Top Contact n-from3umlaser"
+#filename = "Run2-do6209_CF-Laser_CL-2mm_RW-2.5um_%s_Photocurrent_r1.csv" % power_reading_from[power_index]
+T = 20
+CL = "1.0mm"
+RW = "3.5um"
+DevID = 1
+#DevLabel ="CleavedFacet-MIR6.0x56um" + "P-N Top Contact"
+DevLabel ="EF-DFB-5DEG"
+#DevLabel ="CF"
+DevLabel = "EF HR"
+
+
+DevIdentifier = f"AU2eQ2 Batch 2-QDL on GaAs-{DevLabel}_SOI Right {trench_dict[Trench_ID]}-D{Trench_Design_ID}" #+"-Top Contact n-from3umlaser"
+DevIdentifier = f"AU2eQ2 Batch 2-QDL on GaAs-{DevLabel}" #+"-Top Contact n-from3umlaser"
 
 file_record_index = 1
 
-#filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_{sweep_type}_T{T}C"
-filename = f"{date_time}_{DevIdentifier}_{sweep_type}"
+filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_{sweep_type}_T{T}C"
+#filename = f"{date_time}_{DevIdentifier}_{sweep_type}"
 #filename = "Probe Resistance Sweep"
 
 #filename = f"AU2eQ4_EF Al HR_CL1mm_RW3.5um_Laser on GaAs_{sweep_type}"
@@ -131,7 +134,7 @@ voltage_stop_value = 1 # V
 voltage_step_size = 0.05 # V
 
 #### -- wavelength for Thorlab PM
-wavelength = 1200 # nm
+wavelength = 1300 # nm
 
 
 #### --------- INPUTs ------ #####
@@ -178,7 +181,7 @@ def main(): #voltage_limit,start_value,stop_value,step_size
             print("Newport PM is NOT connected !!!!!")
         
         try: 
-            thorlab_PM = Thorlab_100D()
+            thorlab_PM = Thorlab_100D(wavelength)
             #resetting wavlength by a random value
             # tlPM = TLPM()
             # wavelength = c_double(1310)

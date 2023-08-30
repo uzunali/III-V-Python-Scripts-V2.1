@@ -33,4 +33,4 @@ if (align_true):
     set_sweep_parameter(OSA, 1295, 10, 5001, "RPT", 1, 1)
 
 else:
-    set_sweep_parameter(OSA, 1280, 140, 10001, "SGL", 0.01, 1)
+    set_sweep_parameter(OSA, 1300, 20, 10001, "SGL", 0.01, 1)

@@ -36,19 +36,24 @@ save_to_folder = r"\AU4bQ3\OnGaAs"
 save_to_folder = r"AU4bQ3\2023-08-08 CF-AR"
 save_to_folder = "2023-08-23 SOIs"
 
+save_to_folder = r"AU2eQ2-DFB-Batch 2\2023-08-14 DFB R3"
 # measurement_base_path = "\\\\FS1\\Docs2\\ali.uzun\\My Documents\\My Files\\Measurements\\Caladan\\Caladan 22\\"
 # save_to_folder = "Run-2 do6209\\2022-12-19\\"
 # save_to_folder =  "Run-1 do5960\\2022-12-20\\"
+
 T = 20
-CL = "1.2mm"
-RW = "2.5um"
+CL = "1.0mm"
+RW = "3.5um"
 DevID = 1
 #DevLabel ="CleavedFacet-MIR6.0x56um" + "P-N Top Contact"
-DevLabel ="Cleaved Facet-HR"
-DevIdentifier = f"AU4bQ3-QDL-on GaAs-{DevLabel}" #+"-Top Contact n-from3umlaser"
-DevIdentifier = f"AU4bQ3-QDL-on GaAs-CF" #+"-Top Contact n-from3umlaser"
-DevIdentifier = "Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-E2N33"
-DevLabel ="Sample 12-AU4bQ4 Batch2-QDL on Si+AlN-M1N23 6.5x48"
+DevLabel ="EF-DFB-5DEG"
+DevLabel ="EF HR"
+
+
+DevIdentifier = f"AU2eQ2 Batch 2-QDL on GaAs-{DevLabel}" #+"-Top Contact n-from3umlaser"
+
+file_record_index = 1
+
 
 
 Idrive = 100 #mA
@@ -60,7 +65,7 @@ span = 20 # nm
 file_record_index = 1
 
 filename = f"{date_time}_{DevIdentifier}-CL{CL}-RW{RW}_DevID{DevID}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
-filename = f"{date_time}_{DevIdentifier}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
+#filename = f"{date_time}_{DevIdentifier}_SPT_T{T}C_Bias{Idrive}mA-Span{span}nm.csv"
 
 
 
